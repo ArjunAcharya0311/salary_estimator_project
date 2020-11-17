@@ -54,6 +54,69 @@ df = df[df['Industry'] != '-1']
 df = df[df['Size'] != '-1']
 df = df[df['Size'] != 'Unknown']
 
-df.columns
+
+# Job Title
+def title_reducer(title):
+    if 'scientist' in title.lower():
+        return 'data scientist'
+    elif 'data engineer' in title.lower():
+        return 'data engineer'
+    elif 'machine learning' in title.lower():
+        return 'ml engineer'
+    elif 'analyst' in title.lower():
+        return 'analyst'
+    elif 'manager' in title.lower():
+        return 'manager'
+    elif 'director' in title.lower():
+        return 'director'
+    else:
+        return 'na'
+
+def seniority(title):
+    if 'sr' in title.lower() or 'senior' in title.lower() or 'lead' in title.lower() or 'principal' in title.lower() or 'staff' in title.lower():
+        return 'senior'
+    elif 'jr' in title.lower() or 'junior' in title.lower() or 'associate' in title.lower():
+        return 'junior'
+    elif 'intern' in title.lower() or 'co-op' in title.lower():
+        return 'intern'
+    else:
+        return 'na'
+    
+df['job_simple'] = df['Job Title'].apply(title_reducer)
+
+df['seniority'] = df['Job Title'].apply(seniority)
+
+# Cleaning job state further
+def state_cleaner(state):
+    if 'united states' in state.lower():
+        return 'remote'
+    elif 'north carolina' in state.lower():
+        return 'NC'
+    elif 'colorado' in state.lower():
+        return 'CO'
+    elif 'new york state' in state.lower():
+        return 'NY'
+    elif 'virginia'in state.lower():
+        return 'VA'
+    elif 'california' in state.lower():
+        return 'CA'
+    elif 'new jersey' in state.lower():
+        return 'NJ'
+    elif 'north chesterfield' in state.lower():
+        return 'VA'
+    elif 'arizona' in state.lower():
+        return 'AZ'
+    elif 'massachusetts' in state.lower():
+        return 'MA'
+    elif 'new hampshire' in state.lower():
+        return 'NH'
+    elif 'remote' in state.lower():
+        return 'remote'
+    else:
+        return state.strip()
+
+df['job_state'] = df.job_state.apply(state_cleaner)
+
+df['company_text'] = df.company_text.apply(lambda x: x.replace('\n', ''))
 
 df.to_csv("cleaned_data.csv", index = False)
